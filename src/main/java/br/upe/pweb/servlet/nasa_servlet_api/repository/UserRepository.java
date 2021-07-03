@@ -1,11 +1,11 @@
-package br.upe.pweb.servlet.servlet_project.repository;
+package br.upe.pweb.servlet.nasa_servlet_api.repository;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
 
-import br.upe.pweb.servlet.servlet_project.models.NasaUserModel;
-import br.upe.pweb.servlet.servlet_project.interfaces.INasaRepository;
+import br.upe.pweb.servlet.nasa_servlet_api.models.NasaUserModel;
+import br.upe.pweb.servlet.nasa_servlet_api.interfaces.INasaRepository;
 
 public class UserRepository implements INasaRepository<NasaUserModel> {
 

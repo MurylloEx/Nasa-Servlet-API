@@ -1,4 +1,4 @@
-package br.upe.pweb.servlet.servlet_project.controllers;
+package br.upe.pweb.servlet.nasa_servlet_api.controllers;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.upe.pweb.servlet.servlet_project.models.NasaUserModel;
-import br.upe.pweb.servlet.servlet_project.repository.UserRepository;
-import br.upe.pweb.servlet.servlet_project.services.JsonService;
-import br.upe.pweb.servlet.servlet_project.services.NasaService;
-import br.upe.pweb.servlet.servlet_project.services.NasaSingleton;
+import br.upe.pweb.servlet.nasa_servlet_api.models.NasaUserModel;
+import br.upe.pweb.servlet.nasa_servlet_api.repository.UserRepository;
+import br.upe.pweb.servlet.nasa_servlet_api.services.JsonService;
+import br.upe.pweb.servlet.nasa_servlet_api.services.NasaService;
+import br.upe.pweb.servlet.nasa_servlet_api.services.NasaSingleton;
 
 @WebServlet("/nasa/api/auth")
 public class NasaAuthenticationServlet extends HttpServlet{

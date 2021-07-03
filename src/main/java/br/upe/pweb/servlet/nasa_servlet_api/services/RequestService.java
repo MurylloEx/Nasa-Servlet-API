@@ -1,6 +1,7 @@
-package br.upe.pweb.servlet.servlet_project.services;
+package br.upe.pweb.servlet.nasa_servlet_api.services;
 
 import java.util.Map;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -24,9 +25,13 @@ public class RequestService {
       if (qsBuilder.length() > 1){
         qsBuilder.append('&');
       }
-      qsBuilder.append(
-        URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8) + '=' + 
-        URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
+      try {
+        qsBuilder.append(
+          URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8.toString()) + '=' + 
+          URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8.toString()));
+      } catch (UnsupportedEncodingException e) {
+        return qsBuilder.toString();
+      }
     }
     return qsBuilder.toString();
   }

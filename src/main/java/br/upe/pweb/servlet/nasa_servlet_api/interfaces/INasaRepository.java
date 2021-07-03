@@ -1,8 +1,8 @@
-package br.upe.pweb.servlet.servlet_project.interfaces;
+package br.upe.pweb.servlet.nasa_servlet_api.interfaces;
 
 import java.util.ArrayList;
 
-import br.upe.pweb.servlet.servlet_project.models.NasaEntity;
+import br.upe.pweb.servlet.nasa_servlet_api.models.NasaEntity;
 
 public interface INasaRepository <E extends NasaEntity> {
   

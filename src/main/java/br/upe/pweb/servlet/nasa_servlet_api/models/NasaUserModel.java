@@ -1,4 +1,4 @@
-package br.upe.pweb.servlet.servlet_project.models;
+package br.upe.pweb.servlet.nasa_servlet_api.models;
 
 public class NasaUserModel extends NasaEntity {
   

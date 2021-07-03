@@ -1,4 +1,4 @@
-package br.upe.pweb.servlet.servlet_project.controllers;
+package br.upe.pweb.servlet.nasa_servlet_api.controllers;
 
 import java.io.IOException;
 
@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.upe.pweb.servlet.servlet_project.services.NasaService;
-import br.upe.pweb.servlet.servlet_project.services.NasaSingleton;
+import br.upe.pweb.servlet.nasa_servlet_api.services.NasaService;
+import br.upe.pweb.servlet.nasa_servlet_api.services.NasaSingleton;
 
 @WebServlet("/nasa/api/astronomic")
 public class NasaApodServlet extends HttpServlet {
