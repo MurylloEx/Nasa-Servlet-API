@@ -2,7 +2,7 @@ package br.upe.pweb.servlet.nasa_servlet_api.models;
 
 public class NasaUserModel extends NasaEntity {
   
-  public class UserEntity {
+  public static class UserEntity {
 
     private String id;
 
@@ -10,8 +10,9 @@ public class NasaUserModel extends NasaEntity {
       return this.id;
     }
   
-    public void setId(String value){
+    public UserEntity setId(String value){
       this.id = value;
+      return this;
     }
 
   }
@@ -20,7 +21,6 @@ public class NasaUserModel extends NasaEntity {
   private String lastName;
   private String userEmail;
   private UserEntity user;
-
 
   public String getFirstName(){
     return this.firstName;
@@ -34,24 +34,28 @@ public class NasaUserModel extends NasaEntity {
     return this.userEmail;
   }
 
-  public void setFirstName(String value){
+  public NasaUserModel setFirstName(String value){
     this.firstName = value;
+    return this;
   }
 
-  public void setLastName(String value){
+  public NasaUserModel setLastName(String value){
     this.lastName = value;
+    return this;
   }
 
-  public void setUserEmail(String value){
+  public NasaUserModel setUserEmail(String value){
     this.userEmail = value;
+    return this;
   }
 
   public UserEntity getUser(){
     return this.user;
   }
 
-  public void setUser(UserEntity value){
+  public NasaUserModel setUser(UserEntity value){
     this.user = value;
+    return this;
   }
 
   public boolean isValid(){

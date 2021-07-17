@@ -1,27 +1,49 @@
 package br.upe.pweb.servlet.nasa_servlet_api.repository;
 
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Map;
+
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import br.upe.pweb.servlet.nasa_servlet_api.models.NasaUserModel;
+import br.upe.pweb.servlet.nasa_servlet_api.models.NasaUserModel.UserEntity;
+import br.upe.pweb.servlet.nasa_servlet_api.services.JdbcService;
 import br.upe.pweb.servlet.nasa_servlet_api.interfaces.INasaRepository;
 
-public class UserRepository implements INasaRepository<NasaUserModel> {
-
-  private Hashtable<String, NasaUserModel> m_UserStorage = new Hashtable<>();
-  private static UserRepository s_UserRepositoryInstance = null;
+public class UserRepository implements INasaRepository<NasaUserModel>, AutoCloseable {
+  
+  private Connection m_Connection;
 
   /**
-   * Retorna uma instância única do repositório do usuário.
+   * O construtor estabelece a conexão com o banco de dados Postgres
+   * utilizando do driver JDBC apropriado.
+   */
+  @Autowired
+  public void init(){
+    JdbcService jdbc = new JdbcService();
+    try {
+      Class.forName("org.postgresql.Driver");
+      this.m_Connection = DriverManager.getConnection(
+        jdbc.getDatasourceUrl(), 
+        jdbc.getDatasourceUsername(), 
+        jdbc.getDatasourcePassword());
+    } catch (Exception e){
+      //TODO
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Cria uma nova instância do repositório e retorna para o solicitante.
    * 
-   * @return Uma instância do repositório do usuário, controlada pelo Singleton.
+   * @return Uma nova instância do repositório do usuário.
    */
   public static UserRepository getRepository(){
-    if (s_UserRepositoryInstance == null){
-      s_UserRepositoryInstance = new UserRepository();
-    }
-    return s_UserRepositoryInstance;
+    UserRepository repository = new UserRepository();
+    repository.init();
+    return repository;
   }
 
   /**
@@ -29,7 +51,16 @@ public class UserRepository implements INasaRepository<NasaUserModel> {
    */
   @Override
   public void insert(NasaUserModel entity) {
-    this.m_UserStorage.put(entity.getUser().getId(), entity);
+    String sql = "INSERT INTO nasa_users (user_id, user_first_name, user_last_name, user_email) VALUES (?,?,?,?)";
+    try (PreparedStatement statement = m_Connection.prepareStatement(sql)) {
+      statement.setString(1, entity.getUser().getId());
+      statement.setString(2, entity.getFirstName());
+      statement.setString(3, entity.getLastName());
+      statement.setString(4, entity.getUserEmail());
+      statement.executeUpdate();
+    } catch (SQLException e) {
+      //TODO
+    }
   }
 
   /**
@@ -37,10 +68,16 @@ public class UserRepository implements INasaRepository<NasaUserModel> {
    */
   @Override
   public void update(NasaUserModel entity) {
-    for (Map.Entry<String, NasaUserModel> entry : this.m_UserStorage.entrySet()){
-      if (entity.getUser().getId().equals(entry.getKey())){
-        this.m_UserStorage.put(entry.getKey(), entry.getValue());
-      }
+    String sql = "UPDATE nasa_users SET user_id = ?, user_first_name = ?, user_last_name = ?, user_email = ? WHERE user_id = ?";
+    try (PreparedStatement statement = m_Connection.prepareStatement(sql)) {
+      statement.setString(1, entity.getUser().getId());
+      statement.setString(2, entity.getFirstName());
+      statement.setString(3, entity.getLastName());
+      statement.setString(4, entity.getUserEmail());
+      statement.setString(5, entity.getUser().getId());
+      statement.executeUpdate();
+    } catch (SQLException e) {
+      //TODO
     }
   }
 
@@ -49,10 +86,12 @@ public class UserRepository implements INasaRepository<NasaUserModel> {
    */
   @Override
   public void delete(String entityId) {
-    for (Map.Entry<String, NasaUserModel> entry : this.m_UserStorage.entrySet()){
-      if (entityId.equals(entry.getKey())){
-        this.m_UserStorage.remove(entry.getKey(), entry.getValue());
-      }
+    String sql = "DELETE FROM nasa_users WHERE user_id = ?";
+    try (PreparedStatement statement = m_Connection.prepareStatement(sql)) {
+      statement.setString(1, entityId);
+      statement.executeUpdate();
+    } catch (SQLException e) {
+      //TODO
     }
   }
 
@@ -61,11 +100,22 @@ public class UserRepository implements INasaRepository<NasaUserModel> {
    */
   @Override
   public ArrayList<NasaUserModel> select() {
-    ArrayList<NasaUserModel> allUsers = new ArrayList<NasaUserModel>();
-    for (Map.Entry<String, NasaUserModel> entry : this.m_UserStorage.entrySet()){
-      allUsers.add(entry.getValue());
+    String sql = "SELECT * FROM nasa_users";
+    try (PreparedStatement statement = m_Connection.prepareStatement(sql)) {
+      ResultSet result = statement.executeQuery();
+      ArrayList<NasaUserModel> usersList = new ArrayList<>();
+      while (result.next()){
+        usersList.add(new NasaUserModel()
+          .setFirstName(result.getString(2))
+          .setLastName(result.getString(3))
+          .setUserEmail(result.getString(4))
+          .setUser(new UserEntity()
+            .setId(result.getString(1))));
+      }
+      return usersList;
+    } catch (SQLException e) {
+      return new ArrayList<>();
     }
-    return allUsers;
   }
 
   /**
@@ -73,14 +123,32 @@ public class UserRepository implements INasaRepository<NasaUserModel> {
    */
   @Override
   public NasaUserModel select(String entityId) {
-    for (Map.Entry<String, NasaUserModel> entry : this.m_UserStorage.entrySet()){
-      if (entityId.equals(entry.getKey())){
-        return entry.getValue();
+    String sql = "SELECT * FROM nasa_users WHERE user_id = ? ORDER BY user_id ASC LIMIT 1";
+    try (PreparedStatement statement = m_Connection.prepareStatement(sql)) {
+      statement.setString(1, entityId);
+      ResultSet result = statement.executeQuery();
+      if (result.next()){
+        return new NasaUserModel()
+          .setFirstName(result.getString(2))
+          .setLastName(result.getString(3))
+          .setUserEmail(result.getString(4))
+          .setUser(new UserEntity()
+            .setId(result.getString(1)));
       }
+    } catch (SQLException e) {
+      //TODO
     }
     return null;
   }
-  
-  
 
+  /**
+   * Finaliza a conexão com o banco de dados Postgres.
+   * 
+   * @throws Exception
+   */
+  @Override
+  public void close() throws Exception {
+    m_Connection.close();
+  }
+  
 }
