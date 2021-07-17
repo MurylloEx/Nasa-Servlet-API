@@ -3,10 +3,6 @@ package br.upe.pweb.servlet.nasa_servlet_api.repository;
 import java.sql.*;
 import java.util.ArrayList;
 
-import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-
 import br.upe.pweb.servlet.nasa_servlet_api.models.NasaUserModel;
 import br.upe.pweb.servlet.nasa_servlet_api.models.NasaUserModel.UserEntity;
 import br.upe.pweb.servlet.nasa_servlet_api.services.JdbcService;
@@ -17,11 +13,10 @@ public class UserRepository implements INasaRepository<NasaUserModel>, AutoClose
   private Connection m_Connection;
 
   /**
-   * O construtor estabelece a conexão com o banco de dados Postgres
+   * O construtor a conexão com o banco de dados Postgres
    * utilizando do driver JDBC apropriado.
    */
-  @Autowired
-  public void init(){
+  public UserRepository(){
     JdbcService jdbc = new JdbcService();
     try {
       Class.forName("org.postgresql.Driver");
@@ -41,9 +36,7 @@ public class UserRepository implements INasaRepository<NasaUserModel>, AutoClose
    * @return Uma nova instância do repositório do usuário.
    */
   public static UserRepository getRepository(){
-    UserRepository repository = new UserRepository();
-    repository.init();
-    return repository;
+    return new UserRepository();
   }
 
   /**
