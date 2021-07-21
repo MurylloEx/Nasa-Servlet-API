@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import br.upe.pweb.servlet.nasa_servlet_api.models.NasaUserModel;
 import br.upe.pweb.servlet.nasa_servlet_api.models.NasaUserModel.UserEntity;
-import br.upe.pweb.servlet.nasa_servlet_api.services.JdbcService;
+import br.upe.pweb.servlet.nasa_servlet_api.services.JdbcFactory;
 import br.upe.pweb.servlet.nasa_servlet_api.interfaces.INasaRepository;
 
 public class UserRepository implements INasaRepository<NasaUserModel>, AutoCloseable {
@@ -17,16 +17,17 @@ public class UserRepository implements INasaRepository<NasaUserModel>, AutoClose
    * utilizando do driver JDBC apropriado.
    */
   public UserRepository(){
-    JdbcService jdbc = new JdbcService();
     try {
-      Class.forName("org.postgresql.Driver");
-      this.m_Connection = DriverManager.getConnection(
-        jdbc.getDatasourceUrl(), 
-        jdbc.getDatasourceUsername(), 
-        jdbc.getDatasourcePassword());
+      this.m_Connection = JdbcFactory.createDatabaseIfNotExists("nasa_database");
+      JdbcFactory.createTableIfNotExists(
+        this.m_Connection, 
+        "CREATE TABLE IF NOT EXISTS nasa_users (" + 
+        "user_id VARCHAR(255) NOT NULL, " + 
+        "user_first_name VARCHAR(255) NOT NULL, " + 
+        "user_last_name VARCHAR(255) NOT NULL, " + 
+        "user_email VARCHAR(255) NOT NULL)");
     } catch (Exception e){
       //TODO
-      e.printStackTrace();
     }
   }
 
